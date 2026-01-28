@@ -5,7 +5,8 @@ import { response, type Request, type Response } from "express";
 
 export const sendRequest = async (req: Request, res: Response) => {
     try{
-        const {senderId, receiverId} = req.body;
+        const senderId = req.user
+        const {receiverId} = req.body;
     if(!senderId || !receiverId){
         return res.status(404).json({
             message:"Required all credentials",
@@ -43,7 +44,7 @@ export const sendRequest = async (req: Request, res: Response) => {
 
 export const getAllRequest = async (req:Request, res:Response) => {
     try{
-        const {userId} = req.userId;
+        const userId = req.user;
         const response = await prismaClient.friendRequest.findMany({
             where:{
                 receiverId: userId,
@@ -60,7 +61,8 @@ export const getAllRequest = async (req:Request, res:Response) => {
 
         res.status(200).json({
             message:"All user requests",
-            success:false
+            success:true,
+            response
         })
     }catch(error){
         return res.status(500).json({
@@ -74,7 +76,7 @@ export const getAllRequest = async (req:Request, res:Response) => {
 
 export const acceptRequest = async (req:Request, res:Response) => {
     try{
-        const {userId} = req.user
+        const userId = req.user
         const {requestId} = req.body;
 
         if(!requestId) {
@@ -131,13 +133,13 @@ export const acceptRequest = async (req:Request, res:Response) => {
 
 export const getAllFriends = async (req: Request, res: Response) => {
     try{    
-        const {userId} = req.user;
+        const userId = req.user;
 
         const friendships = await prismaClient.friendship.findMany({
             where:{
                 OR:[
                     {user1Id: userId},
-                    {user1Id: userId}
+                    {user2Id: userId}
                 ]
             },
             include: {
@@ -157,6 +159,8 @@ export const getAllFriends = async (req: Request, res: Response) => {
                 }
             }
         })
+
+        // console.log(friendships);
 
         const friends = friendships.map((f) => 
             f.user1Id === userId ? f.user2 : f.user1
@@ -181,7 +185,7 @@ export const getAllFriends = async (req: Request, res: Response) => {
 
 export const openConversation = async (req: Request, res: Response) => {
   try {
-    const {userId} = req.user;      
+    const userId = req.user;      
     const { friendId } = req.body;   
 
 
@@ -213,8 +217,10 @@ export const openConversation = async (req: Request, res: Response) => {
 
 export const sendMessage = async (req: Request, res: Response) => {
   try {
-    const senderId = req.user.userId; 
+    const senderId = req.user
     const { friendId, content } = req.body;
+
+    console.log(friendId, content);
 
     if (!friendId || !content) {
       return res.status(400).json({ message: "Missing data" });
@@ -281,8 +287,9 @@ export const sendMessage = async (req: Request, res: Response) => {
 
 export const getMessages = async (req: Request, res: Response) => {
   try {
-    const { conversationId } = req.params;
-
+    const conversationId = req.params.conversationId as string;
+    console.log("con", conversationId);
+    
     if (!conversationId) {
       return res.status(400).json({ message: "Conversation ID is required" });
     }

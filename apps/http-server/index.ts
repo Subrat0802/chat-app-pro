@@ -3,6 +3,7 @@ import authRoute from "./routes/auth";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { prismaClient } from "@repo/db/client";
+import reqRouter from "./routes/request";
 
 
 
@@ -15,7 +16,8 @@ app.use(cors({
 app.use(cookieParser());
 
 
-app.use("/api/v1", authRoute);
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/chat", reqRouter);
 
 
 async function startServer() {
