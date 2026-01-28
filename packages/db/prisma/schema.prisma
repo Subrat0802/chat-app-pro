@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  username  String   @unique
+  email     String   @unique
+  password  String
+
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+
+  friendships1 Friendship[] @relation("UserOne")
+  friendships2 Friendship[] @relation("UserTwo")
+
+  conversations1 Conversation[] @relation("User1Conversations")
+  conversations2 Conversation[] @relation("User2Conversations")
+
+  sentMessages Message[] @relation("SentMessages")
+
+  createdAt DateTime @default(now())
+}
+
+
+/* ---------------- FRIEND REQUEST ---------------- */
+
+model FriendRequest {
+  id          String   @id @default(uuid())
+
+  senderId    String
+  receiverId  String
+
+  sender      User     @relation("SentRequests", fields: [senderId], references: [id])
+  receiver    User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+
+  status      RequestStatus @default(PENDING)
+
+  createdAt  DateTime @default(now())
+
+  // ❌ prevent duplicate requests
+  @@unique([senderId, receiverId])
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+/* ---------------- FRIENDSHIP ---------------- */
+
+model Friendship {
+  id       String @id @default(uuid())
+
+  user1Id  String
+  user2Id  String
+
+  user1    User   @relation("UserOne", fields: [user1Id], references: [id])
+  user2    User   @relation("UserTwo", fields: [user2Id], references: [id])
+
+  createdAt DateTime @default(now())
+
+  // 🔥 enforce one friendship per pair
+  @@unique([user1Id, user2Id])
+}
+
+/* ---------------- CHAT ---------------- */
+
+model Conversation {
+  id        String   @id @default(uuid())
+
+  user1Id   String
+  user2Id   String
+
+  user1     User     @relation("User1Conversations", fields: [user1Id], references: [id])
+  user2     User     @relation("User2Conversations", fields: [user2Id], references: [id])
+
+  messages  Message[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([user1Id, user2Id])
+}
+
+
+model Message {
+  id              String   @id @default(uuid())
+  content         String
+
+  senderId        String
+  conversationId  String
+
+  sender          User     @relation("SentMessages", fields: [senderId], references: [id])
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId])
+}
