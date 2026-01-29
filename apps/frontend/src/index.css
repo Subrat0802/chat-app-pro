@@ -1,1 +1,17 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&display=swap");
+
+@layer base {
+  html {
+    @apply bg-white text-black;
+  }
+
+  body {
+    font-family: "Exo 2", sans-serif;
+  }
+}
+
+/* Logo / branding font */
+.test-font {
+  font-family: "Momo Signature", cursive;
+}

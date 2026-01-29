@@ -1,0 +1,17 @@
+// tailwind.config.js
+export default {
+  // darkMode: "class",
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Montserrat", "sans-serif"],
+        signature: ["Momo Signature", "cursive"],
+      },
+    },
+  },
+}
