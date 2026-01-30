@@ -29,9 +29,9 @@ const Signup = ({ show, setShow }: {
             className="border border-white/20 p-2 rounded-xl "
             placeholder="Password"
           />
-          <button className="md:text-xl cursor-pointer hover:-translate-y-1 hover:border-transparent hover:shadow-xs transition-all duration-300 hover:shadow-sky-600 font-semibold p-2 md:p-4 border relative group">
+          <button className="md:text-xl cursor-pointer hover:-translate-y-1 hover:border-transparent hover:shadow-xs transition-all duration-300 hover:shadow-sky-600 font-semibold p-1 md:p-4 border relative group">
             SignUp
-            <div className="z-10  absolute w-full  opacity-0 group-hover:opacity-100 transition-all duration-300 border-2 bg-sky-600 border-sky-600 bottom-0 left-0"></div>
+            <div className="z-10  absolute w-full  opacity-0 group-hover:opacity-100 transition-all duration-300 border-2 bg-sky-600 border-sky-600 -bottom-1 left-0"></div>
           </button>
           <button onClick={handleClick}>Signin</button>
         </div>

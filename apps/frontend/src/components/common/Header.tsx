@@ -5,7 +5,7 @@ const Header = () => {
     <div className="flex justify-center fixed w-full bg-black/50 backdrop-blur-sm z-20  text-white/80 overflow-hidden">
     <div className="flex justify-between items-center max-w-7xl px-2 md:px-0 mx-auto w-full py-3 ">
         <div className="flex gap-2 justify-center items-center">
-            <p className="test-font text-xl md:text-3xl text-sky-600 ">Whatsup</p>
+            <Link to={"/"}><p className="test-font text-xl md:text-3xl text-sky-600 ">Whatsup</p></Link>
         </div>
         <div className="flex gap-3">
             <Link to={"/auth"}><button className="md:text-xl cursor-pointer hover:-translate-y-1 hover:border-transparent hover:shadow-xs transition-all duration-300 hover:shadow-sky-600 font-semibold p-2 md:p-4 border relative group">
