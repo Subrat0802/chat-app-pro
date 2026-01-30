@@ -1,0 +1,40 @@
+{
+  "features": [
+    {
+      "id": "lightning_fast",
+      "title": "Lightning Fast",
+      "description": "Messages delivered in microseconds with our edge network spanning 150+ locations globally.",
+      "icon": "Zap"
+    },
+    {
+      "id": "security",
+      "title": "Military-Grade Security",
+      "description": "End-to-end encryption with zero-knowledge architecture. Your data, your privacy.",
+      "icon": "ShieldCheck"
+    },
+    {
+      "id": "rich_media",
+      "title": "Rich Media",
+      "description": "Share 4K images, videos, documents, and voice notes with instant preview and playback.",
+      "icon": "Image"
+    },
+    {
+      "id": "universal_platform",
+      "title": "Universal Platform",
+      "description": "Seamless sync across web, iOS, Android, Windows, Mac, and Linux. One account, all devices.",
+      "icon": "Globe"
+    },
+    {
+      "id": "ai_assistant",
+      "title": "AI Assistant",
+      "description": "Smart compose, real-time translation, message summarization, and intelligent search.",
+      "icon": "Bot"
+    },
+    {
+      "id": "team_spaces",
+      "title": "Team Spaces",
+      "description": "Unlimited channels, screen sharing, voice/video calls, and collaborative workspaces.",
+      "icon": "Users"
+    }
+  ]
+}
