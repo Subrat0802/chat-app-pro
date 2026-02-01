@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 // import Example from "./pages/Example";
 import Header from "./components/common/Header";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         {/* <Route path="/exa" element={<Example />}/> */}
         <Route path="/auth" element={<Auth />}/>
+        <Route path="/dashboard" element={<Dashboard />}/>
       </Routes>
     </div>
   );

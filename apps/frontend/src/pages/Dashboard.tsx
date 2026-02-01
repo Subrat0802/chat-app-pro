@@ -1,7 +1,9 @@
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <div className="w-full min-h-screen">
+      Welcome to Dashboard
+    </div>
   )
 }
 
