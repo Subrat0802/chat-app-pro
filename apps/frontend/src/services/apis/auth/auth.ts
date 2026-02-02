@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { apiConnector } from "../apiConnect";
 import { endpoint } from "../apis";
 
-const { SIGNUP_API, SIGNIN_API } = endpoint;
+const { SIGNUP_API, SIGNIN_API, ME } = endpoint;
 
 interface SignupProps {
   name: string;
@@ -19,7 +19,7 @@ export const signup = async ({name, username, email, password}: SignupProps) => 
       toast.success("Account created successfully");
       return true;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const message =
         error.response?.data.errors[0].path ||
@@ -41,14 +41,13 @@ export const signup = async ({name, username, email, password}: SignupProps) => 
 
 
 export const signin = async ({email, password}: SignupProps) => {
-    console.log(email, password);
   try {
     const response = await apiConnector("POST", SIGNIN_API, {email, password});
     if (response.status === 200 || response.status === 201) {
       toast.success("Signin succesfull");
-      return true;
+      return response.data.user;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const message =
         error.response?.data.errors[0].path ||
@@ -64,5 +63,16 @@ export const signin = async ({email, password}: SignupProps) => {
     }
 
     return false;
+  }
+};
+
+
+export const getMe = async () => {
+  try {
+    const response = await apiConnector("GET", ME);
+    return response.data; 
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 };

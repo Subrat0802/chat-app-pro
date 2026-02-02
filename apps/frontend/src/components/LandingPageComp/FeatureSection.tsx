@@ -21,7 +21,7 @@ const FeatureSection = () => {
                     featureData.features.map((el) => {
                         const Icon = iconMap[el.icon as keyof typeof iconMap];
 
-                        return <div className="border bg-gray-400/10 border-white/10  rounded-xl text-center p-6 px-5 hover:-translate-y-2 transition-all hover:border-sky-600 duration-300 hover:shadow-2xl hover:shadow-cyan-500/20">
+                        return <div key={el.id}  className="border bg-gray-400/10 border-white/10  rounded-xl text-center p-6 px-5 hover:-translate-y-2 transition-all hover:border-sky-600 duration-300 hover:shadow-2xl hover:shadow-cyan-500/20">
                             <div className="text-start mb-5 bg-gray-400/20 w-fit p-5 rounded-2xl">
                                 <Icon />
                             </div>

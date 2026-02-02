@@ -3,23 +3,20 @@ import Input from "@repo/ui/input";
 import { useRef } from "react";
 import { signin } from "../../services/apis/auth/auth";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../services/redux/slices/authSlice";
 
-const Signin = ({
-  show,
-  setShow,
-}: {
-  show: string;
-  setShow: React.Dispatch<React.SetStateAction<"signin" | "signup">>;
-}) => {
+const Signin = ({show, setShow,}: {show: string; setShow: React.Dispatch<React.SetStateAction<"signin" | "signup">>}) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
     const emailRef = useRef<HTMLInputElement>(null);
-      const passwordRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
     const handleClick = () => {
         setShow("signup")
     }
 
     const handleSigninSubmit = async () => {
-
+        
         const email = emailRef.current?.value || "";
         const password = passwordRef.current?.value || "";
       
@@ -28,6 +25,9 @@ const Signin = ({
           if (!response) {
             return;
           }
+          console.log("FORNTEND RESPOSNE", response);
+          dispatch(setUser(response))
+
           emailRef.current && (emailRef.current.value = "");
           passwordRef.current && (passwordRef.current.value = "");
 

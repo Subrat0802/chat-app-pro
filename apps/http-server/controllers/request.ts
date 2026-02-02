@@ -1,5 +1,5 @@
 import { prismaClient } from "@repo/db/client";
-import { response, type Request, type Response } from "express";
+import { type Request, type Response } from "express";
 
 
 

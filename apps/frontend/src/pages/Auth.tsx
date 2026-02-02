@@ -3,7 +3,7 @@ import Signin from "../components/AuthComp/Signin";
 import Signup from "../components/AuthComp/Signup";
 
 const Auth = () => {
-  const [show, setShow] = useState<"signin" | "signup">("signup");
+  const [show, setShow] = useState<"signin" | "signup">("signin");
 
   return (
     <div className="w-full min-h-screen pt-16 flex justify-center items-center bg-black">
@@ -13,7 +13,7 @@ const Auth = () => {
         <div className="w-1/2 relative">
           {/* Animated Background Panel */}
           <div className={`
-              absolute inset-0 bg-gradient-to-br from-sky-600 to-sky-800 rounded-3xl
+              absolute inset-0 bg-linear-to-br from-sky-600 to-sky-800 rounded-3xl
               transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
               ${show === "signup"
                   ? "translate-x-0 opacity-100 scale-100 z-10"
@@ -55,7 +55,7 @@ const Auth = () => {
         <div className="w-1/2 relative">
           {/* Animated Background Panel */}
           <div className={`
-              absolute inset-0 bg-gradient-to-br from-sky-600 to-sky-800 rounded-3xl
+              absolute inset-0 bg-linear-to-br from-sky-600 to-sky-800 rounded-3xl
               transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
               ${show === "signin"
                   ? "translate-x-0 opacity-100 scale-100 z-10"

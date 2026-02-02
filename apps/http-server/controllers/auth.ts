@@ -1,7 +1,7 @@
 import { type CookieOptions, type Request, type Response } from "express";
 import { signinValidation, signupValidation } from "../config/authValidation";
 import { prismaClient } from "@repo/db/client";
-import { ZodError } from "zod";
+import { success, ZodError } from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -168,3 +168,43 @@ export const signin = async (req: Request, res: Response) => {
   }
 };
 
+
+export const me = async (req: Request, res: Response) => {
+  try{
+    const userId = req.user;
+    if(!userId) {
+      return res.status(404).json({
+        message:"Provide credentials, Me route"
+      })
+    }
+    const response = await prismaClient.user.findFirst({
+      where:{
+        id: userId
+      },
+      select:{
+        id: true,
+        name: true,
+        username: true,
+        email: true
+      }
+    })
+
+    if(!response){
+      return res.status(404).json({
+        message:"user not found"
+      })
+    }
+
+    return res.status(200).json({
+      message:"User authnticated, me route",
+      success: true,
+      response
+    })
+  }catch(error){
+    return res.status(500).json({
+      message:"Server error, Me route",
+      success:false,
+      error
+    })
+  }
+}
