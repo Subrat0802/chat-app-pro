@@ -41,7 +41,7 @@ const Signup = ({ show, setShow }: {
         <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-size-[100px_100px]"></div>
       {show === "signup"? (
         <div className="flex flex-col w-[80%] z-30 justify-center items-center gap-3">
-          <p className="">Sign up</p>
+          {/* <p className="">Sign up</p> */}
           <Input
             type="text"
             style="primary"

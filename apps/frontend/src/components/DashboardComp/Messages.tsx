@@ -5,7 +5,7 @@ const Messages = () => {
 
       <div className="absolute bottom-0 w-full text-lg p-4 grid grid-cols-11 items-center gap-2">
         <input
-          className="col-span-10 border border-white/20 px-3 py-4 rounded"
+          className="col-span-10 border border-white/20 px-3 py-4 rounded focus:outline-none focus:ring-0 focus:border-sky-600  transition-all duration-200"
           placeholder="Type a message..."
         />
         <button className="col-span-1 bg-sky-600/80 text-white py-4 rounded">

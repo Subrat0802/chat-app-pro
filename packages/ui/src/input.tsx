@@ -8,7 +8,7 @@ interface InputProps {
 }
 
 const styles = {
-  primary: "border px-3 py-2 rounded w-[80%]",
+  primary: "border px-3 py-2 rounded w-[80%] focus:outline-none focus:ring-1 focus:border-sky-500  transition-all duration-200",
   secondary: "border px-3 py-2 rounded bg-gray-100",
 }
 

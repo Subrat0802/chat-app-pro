@@ -38,8 +38,8 @@ const Signin = ({show, setShow,}: {show: string; setShow: React.Dispatch<React.S
     <div className="flex flex-col justify-center items-center gap-4 h-full">
       {show === "signin" ? (
         <div className="flex flex-col w-[80%] justify-center items-center gap-3">
-          <p className="">Sign in</p>
-          <p>Access your chats instantly.</p>
+          {/* <p className="">Sign in</p>
+          <p>Access your chats instantly.</p> */}
           <Input
             type="text"
             style="primary"
