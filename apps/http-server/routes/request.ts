@@ -1,9 +1,10 @@
 import express from "express";
 import { middleware } from "../middleware/middleware";
-import { acceptRequest, getAllFriends, getAllRequest, getMessages, openConversation, sendMessage, sendRequest } from "../controllers/request";
+import { acceptRequest, findPeople, getAllFriends, getAllRequest, getMessages, openConversation, sendMessage, sendRequest } from "../controllers/request";
 
 const reqRouter = express.Router();
 
+reqRouter.get("/findPeople", middleware, findPeople)
 reqRouter.post("/sendRequest", middleware, sendRequest)
 reqRouter.get("/getAllRequest", middleware, getAllRequest);
 reqRouter.post("/acceptRequest", middleware, acceptRequest);

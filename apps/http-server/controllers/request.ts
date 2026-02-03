@@ -1,5 +1,6 @@
 import { prismaClient } from "@repo/db/client";
 import { type Request, type Response } from "express";
+import { success } from "zod";
 
 
 
@@ -220,13 +221,13 @@ export const sendMessage = async (req: Request, res: Response) => {
     const senderId = req.user
     const { friendId, content } = req.body;
 
-    console.log(friendId, content);
+    if(!senderId){
+      throw new Error("senderId is required");
+    }
 
     if (!friendId || !content) {
       return res.status(400).json({ message: "Missing data" });
     }
-
-    // 1️⃣ Check friendship (VERY IMPORTANT)
     const isFriend = await prismaClient.friendship.findFirst({
       where: {
         OR: [
@@ -240,10 +241,8 @@ export const sendMessage = async (req: Request, res: Response) => {
       return res.status(403).json({ message: "You are not friends" });
     }
 
-    // 2️⃣ Normalize order
     const [u1, u2] = [senderId, friendId].sort();
 
-    // 3️⃣ Find or create conversation
     let conversation = await prismaClient.conversation.findUnique({
       where: {
         user1Id_user2Id: {
@@ -262,7 +261,6 @@ export const sendMessage = async (req: Request, res: Response) => {
       });
     }
 
-    // 4️⃣ Save message
     const message = await prismaClient.message.create({
       data: {
         content,
@@ -313,3 +311,51 @@ export const getMessages = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+
+export const findPeople = async (req: Request, res: Response) => {
+  try{
+    const userId = req.user;
+    const {userName} = req.query;
+
+    if(!userName){
+      return res.status(400).json({
+        message:"user name is required"
+      })
+    }
+
+    const response = await prismaClient.user.findMany({
+      where:{
+        username: {
+          startsWith: userName as string,
+          mode: "insensitive"
+        }
+      },
+      select:{
+        username: true,
+        name: true,
+        id: true
+      }
+    })
+
+    if(response.length === 0){
+      return res.status(404).json({
+        message:"No user found with this username",
+        success:false
+      })
+    }
+
+    return res.status(200).json({
+      message:"user found",
+      success:true,
+      response
+    })
+
+  }catch(error){
+    return res.status(500).json({
+      message:"Server error while finding people",
+      success: false
+    })
+  }
+}
