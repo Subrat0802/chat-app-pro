@@ -3,7 +3,7 @@ import "./App.css";
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-// import ProtecteRoute from "./components/common/ProtecteRoute";
+import ProtecteRoute from "./components/common/ProtecteRoute";
 import { PublicLayout } from "./layouts/PublickLayout";
 import OpenRoute from "./components/common/OpenRoute";
 
@@ -18,9 +18,9 @@ function App() {
               <Route path="auth" element={<Auth />} />
             </Route>
           </Route>
-          {/* <Route element={<ProtecteRoute />}> */}
+          <Route element={<ProtecteRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
-          {/* </Route> */}
+          </Route>
         </Routes>
       </div>
   );
