@@ -1,8 +1,9 @@
 import { prismaClient } from "@repo/db/client";
 import { type Request, type Response } from "express";
+import NodeCache from "node-cache";
 import { success } from "zod";
 
-
+const cache = new NodeCache({stdTTL: 60});
 
 export const sendRequest = async (req: Request, res: Response) => {
     try {
@@ -132,14 +133,42 @@ export const sendRequest = async (req: Request, res: Response) => {
 }
 
 export const getAllRequest = async (req:Request, res:Response) => {
+  // const startTime = Date.now();
     try{
         const userId = req.user;
+        // console.log(`[${Date.now() - startTime}ms] User ID extracted:`, userId);
+        const cacheKey = `req_${userId}`;
+        const cached = cache.get(cacheKey);
+
+        if(cached) {
+          return res.status(200).json({
+            message:"All user requests (cached)",
+            success: true,
+            response: cached
+          })
+        }
+
+        // const dbStart = Date.now();
         const response = await prismaClient.friendRequest.findMany({
             where:{
                 receiverId: userId,
                 status: "PENDING"
+            },
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  username: true,
+                  name: true
+                }
+              }
+            },
+            orderBy:{
+              createdAt: "desc"
             }
         })
+        // console.log(`[${Date.now() - dbStart}ms] Database query completed`);
+        // console.log(`[${Date.now() - startTime}ms] Total time before response`);
 
         if(!response){
             return res.status(404).json({
@@ -147,6 +176,7 @@ export const getAllRequest = async (req:Request, res:Response) => {
                 success:false
             })
         }
+        cache.set(cacheKey, response);
 
         res.status(200).json({
             message:"All user requests",

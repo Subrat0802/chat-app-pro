@@ -1,6 +1,6 @@
 import { User as UserIcon } from "lucide-react";
-import { useRef, useState, type ChangeEvent } from "react";
-import { findPeople, sendRequest } from "../../services/apis/auth/sendRequest";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { findPeople, getAllFriends, sendRequest } from "../../services/apis/auth/sendRequest";
 import { toast } from "sonner";
 
 type ContactUser = {
@@ -16,6 +16,7 @@ const ShowAllContacts = () => {
   const [searchText, setSearchText] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchUsers, setSearchUsers] = useState<ContactUser[]>([]);
+  const [allFriends, setAllFrineds] = useState<ContactUser[]>([]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -54,6 +55,16 @@ const ShowAllContacts = () => {
       console.log(e);
     }
   }
+
+
+  useEffect(() => {
+    async function getAllFriend() {
+        const response = await getAllFriends();
+        setAllFrineds(response);
+    }
+    getAllFriend();
+  }, []);
+
   return (
     <>
         <div className="relative w-full py-2">
@@ -101,15 +112,20 @@ const ShowAllContacts = () => {
       </div>
 
       <div className="pt-2 flex-1 overflow-y-auto scroll-smooth bg-gray-800/10">
-        <div className="flex items-center gap-4 py-2 px-3 rounded-md cursor-pointer hover:bg-gray-900 transition">
+      {
+        allFriends.length == 0 ? <p>No frineds</p> : allFriends.map((el) => (
+            <div className="flex items-center gap-4 py-2 px-3 rounded-md cursor-pointer hover:bg-red-900 transition">
           <div className="p-4 bg-gray-700 rounded-full">
             <UserIcon className="text-white" />
           </div>
           <div className="text-white/70 font-semibold flex flex-col">
-            <p className="text-lg">Subrat Mishra</p>
+            <p className="text-lg">{el.username}</p>
             <p className="text-sm">Hi</p>
           </div>
         </div>
+        )) 
+      }
+        
       </div>
     </>
   )

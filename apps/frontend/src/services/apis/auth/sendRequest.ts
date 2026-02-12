@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { apiConnector } from "../apiConnect";
 import { peopleEndpoint } from "../apis";
 
-const { FIND_PEOPLE, SEND_REQUEST } = peopleEndpoint;
+const { FIND_PEOPLE, SEND_REQUEST, GET_ALL_REQUESTS, ACCEPT_REQUESTS, GET_ALL_FRIENDS } = peopleEndpoint;
 
 export const findPeople = async (userName: string) => {
   try {
@@ -67,7 +67,6 @@ export const sendRequest = async (receiverId: string) => {
   } catch (error: any) {
     console.error("Error sending request:", error);
 
-    // Handle specific error cases
     if (error?.response?.status === 404) {
       toast.error(error.response.data?.message || "User not found");
     } else if (error?.response?.status === 403) {
@@ -87,3 +86,56 @@ export const sendRequest = async (receiverId: string) => {
 };
 
 
+
+
+export const getAllRequests = async () => {
+  try {
+    const response = await apiConnector("GET", GET_ALL_REQUESTS);
+    console.log("GET_ALL_REQUESTS", response);
+
+    if (!response?.data) {
+      toast.error("Failed to fetch friend requests");
+      return null;
+    }
+
+    if (!response.data.success) {
+      toast.error(response.data.message || "Failed to fetch requests");
+      return null;
+    }
+    return response.data.response || [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error("Error fetching friend requests:", error);
+
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Failed to load friend requests";
+
+    toast.error(errorMessage);
+    return null;
+  }
+};
+
+
+export const acceptRequest = async (requestId: string) => {
+  try{
+    const response = await apiConnector("POST", ACCEPT_REQUESTS, {requestId});
+    console.log("Request accepted", response);
+  }catch(error){
+    console.log("error", error);
+  }
+}
+
+
+export const getAllFriends = async () => {
+  try{
+    const response = await apiConnector("GET", GET_ALL_FRIENDS)
+    console.log("get all friends", response.data.friends);
+
+    return response.data.friends;
+  }catch(error){
+    console.log("Error get all friends", error);
+  }
+}

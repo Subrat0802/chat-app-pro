@@ -46,6 +46,9 @@ model FriendRequest {
 
   // ❌ prevent duplicate requests
   @@unique([senderId, receiverId])
+  
+  @@index([receiverId, status])  // Speeds up your exact query!
+  @@index([createdAt])
 }
 
 enum RequestStatus {

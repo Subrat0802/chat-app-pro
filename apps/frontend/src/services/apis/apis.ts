@@ -10,6 +10,9 @@ export const endpoint = {
 export const peopleEndpoint = {
     FIND_PEOPLE: BASE_URL + "/api/v1/chat/findPeople", 
     SEND_REQUEST: BASE_URL + "/api/v1/chat/sendRequest",
+    GET_ALL_REQUESTS:BASE_URL + "/api/v1/chat/getAllRequest", //acceptRequest
+    ACCEPT_REQUESTS: BASE_URL + "/api/v1/chat/acceptRequest",
+    GET_ALL_FRIENDS: BASE_URL + "/api/v1/chat/getAllFriends", 
 }
 
 
