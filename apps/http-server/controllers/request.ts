@@ -5,43 +5,131 @@ import { success } from "zod";
 
 
 export const sendRequest = async (req: Request, res: Response) => {
-    try{
+    try {
         const senderId = req.user
-        const {receiverId} = req.body;
-    if(!senderId || !receiverId){
-        return res.status(404).json({
-            message:"Required all credentials",
-            success: false
-        })
-    }
+        const { receiverId } = req.body
 
-    const response = await prismaClient.friendRequest.create({
-        data:{
-            senderId: senderId,
-            receiverId: receiverId
+        // Validation
+        if (!senderId) {
+            return res.status(401).json({
+                message: "Unauthorized - User not authenticated",
+                success: false
+            })
         }
-    })
 
-    if(!response){
-        return res.status(403).json({
-            success:false,
-            message:"Error while sending request"
+        if (!receiverId || receiverId.trim() === '') {
+            return res.status(400).json({
+                message: "Receiver ID is required",
+                success: false
+            })
+        }
+
+        // Prevent self-request
+        if (senderId === receiverId) {
+            return res.status(400).json({
+                message: "You cannot send a friend request to yourself",
+                success: false
+            })
+        }
+
+        // Check if receiver exists
+        const receiverExists = await prismaClient.user.findUnique({
+            where: { id: receiverId }
         })
-    }
 
-    return res.status(202).json({
-        message:"Request sent successfully",
-        success:true
-    })
-    }catch(error){
+        if (!receiverExists) {
+            return res.status(404).json({
+                message: "User not found",
+                success: false
+            })
+        }
+
+        // Check if already friends
+        const existingFriendship = await prismaClient.friendship.findFirst({
+            where: {
+                OR: [
+                    { user1Id: senderId, user2Id: receiverId },
+                    { user1Id: receiverId, user2Id: senderId }
+                ]
+            }
+        })
+
+        if (existingFriendship) {
+            return res.status(400).json({
+                message: "You are already friends with this user",
+                success: false
+            })
+        }
+
+        // Check if request already sent
+        const checkIfAlreadySent = await prismaClient.friendRequest.findFirst({
+            where: {
+                senderId: senderId,
+                receiverId: receiverId,
+                status: 'PENDING'
+            }
+        })
+
+        if (checkIfAlreadySent) {
+            return res.status(400).json({
+                message: "Friend request already sent",
+                success: false
+            })
+        }
+
+        // Check if reverse request exists
+        const reverseRequest = await prismaClient.friendRequest.findFirst({
+            where: {
+                senderId: receiverId,
+                receiverId: senderId,
+                status: 'PENDING'
+            }
+        })
+
+        if (reverseRequest) {
+            return res.status(400).json({
+                message: "This user has already sent you a friend request",
+                success: false
+            })
+        }
+
+        // Create friend request
+        const response = await prismaClient.friendRequest.create({
+            data: {
+                senderId: senderId,
+                receiverId: receiverId
+            }
+        })
+
+        return res.status(201).json({
+            message: "Friend request sent successfully",
+            success: true,
+            data: response
+        })
+
+    } catch (error: any) {
+        console.error("Error sending friend request:", error)
+        if (error.code === 'P2002') {
+            return res.status(400).json({
+                message: "Friend request already exists",
+                success: false
+            })
+        }
+
+        if (error.code === 'P2003') {
+            return res.status(404).json({
+                message: "User not found",
+                success: false
+            })
+        }
+
         return res.status(500).json({
-            message:"Server error while sending request",
-            success:false
+            message: "Server error while sending request",
+            success: false,
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         })
     }
-    
 }
-
 
 export const getAllRequest = async (req:Request, res:Response) => {
     try{
