@@ -13,6 +13,7 @@ interface SignupProps {
 }
 
 export const signup = async ({name, username, email, password}: SignupProps) => {
+  console.log(name, username, email, password);
   try {
     const response = await apiConnector("POST", SIGNUP_API, {name, username, email, password});
     if (response.status === 200 || response.status === 201) {

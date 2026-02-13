@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = "http://localhost:3001";
 
 export const endpoint = {
     SIGNUP_API: BASE_URL + "/api/v1/auth/signup",
@@ -13,6 +13,7 @@ export const peopleEndpoint = {
     GET_ALL_REQUESTS:BASE_URL + "/api/v1/chat/getAllRequest", //acceptRequest
     ACCEPT_REQUESTS: BASE_URL + "/api/v1/chat/acceptRequest",
     GET_ALL_FRIENDS: BASE_URL + "/api/v1/chat/getAllFriends", 
+    OPEN_CONVO: BASE_URL + "/api/v1/chat/openConversation"
 }
 
 

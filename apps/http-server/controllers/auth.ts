@@ -6,9 +6,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req: Request, res: Response) => {
+ 
   try {
     const { name, username, email, password } =
       await signupValidation.parseAsync(req.body);
+       console.log(name, username, email, password);
 
     const checkUserEmail = await prismaClient.user.findFirst({
       where: {

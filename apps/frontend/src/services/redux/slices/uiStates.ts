@@ -6,7 +6,7 @@ interface UiState {
 }
 
 const initialState: UiState = {
-    activeView: "requests",
+    activeView: "message",
     loading: true
 }
 

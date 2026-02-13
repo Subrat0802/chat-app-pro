@@ -1,6 +1,6 @@
 import { User as UserIcon } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { findPeople, getAllFriends, sendRequest } from "../../services/apis/auth/sendRequest";
+import { findPeople, getAllFriends, openConvo, sendRequest } from "../../services/apis/auth/sendRequest";
 import { toast } from "sonner";
 
 type ContactUser = {
@@ -60,14 +60,21 @@ const ShowAllContacts = () => {
   useEffect(() => {
     async function getAllFriend() {
         const response = await getAllFriends();
+        console.log(response);
         setAllFrineds(response);
     }
     getAllFriend();
   }, []);
 
+  const handleOpenConvo = async (friendId: string) => {
+    console.log("Frinednid", friendId);
+    const response = await openConvo(friendId);
+    console.log("FROENDSIDE CONVO", response);
+  }
+
   return (
     <>
-        <div className="relative w-full py-2">
+      <div className="relative w-full py-2">
         <input
           value={searchText}
           onChange={handleChange}
@@ -114,7 +121,7 @@ const ShowAllContacts = () => {
       <div className="pt-2 flex-1 overflow-y-auto scroll-smooth bg-gray-800/10">
       {
         allFriends.length == 0 ? <p>No frineds</p> : allFriends.map((el) => (
-            <div className="flex items-center gap-4 py-2 px-3 rounded-md cursor-pointer hover:bg-red-900 transition">
+            <div key={el.id} onClick={() => handleOpenConvo(el.id)} className="flex items-center gap-4 py-2 px-3 rounded-md cursor-pointer hover:bg-gray-900 transition">
           <div className="p-4 bg-gray-700 rounded-full">
             <UserIcon className="text-white" />
           </div>

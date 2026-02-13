@@ -307,8 +307,39 @@ export const openConversation = async (req: Request, res: Response) => {
     const userId = req.user;      
     const { friendId } = req.body;   
 
-
     const [u1, u2] = [userId, friendId].sort();
+
+    // Shared include configuration
+    const includeConfig = {
+      messages: {
+        orderBy: {
+          createdAt: 'asc' as const
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+            }
+          }
+        }
+      },
+      user1: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        }
+      },
+      user2: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        }
+      }
+    };
 
     let convo = await prismaClient.conversation.findUnique({
       where: {
@@ -317,11 +348,13 @@ export const openConversation = async (req: Request, res: Response) => {
           user2Id: u2,
         },
       },
+      include: includeConfig
     });
 
     if (!convo) {
       convo = await prismaClient.conversation.create({
         data: { user1Id: u1, user2Id: u2 },
+        include: includeConfig
       });
     }
 
@@ -407,14 +440,14 @@ export const getMessages = async (req: Request, res: Response) => {
     console.log("con", conversationId);
     
     if (!conversationId) {
-      return res.status(400).json({ message: "Conversation ID is required" });
+      return res.status(400).json({ message: "Conversation ID is required"}); 
     }
-
+    
     const messages = await prismaClient.message.findMany({
       where: {
         conversationId,
       },
-      orderBy: {
+      orderBy: {                    
         createdAt: "asc",
       },
     });
@@ -443,7 +476,7 @@ export const findPeople = async (req: Request, res: Response) => {
       })
     }
 
-    const response = await prismaClient.user.findMany({
+    const response = await prismaClient.user.findMany({                       
       where:{
         username: {
           startsWith: userName as string,
