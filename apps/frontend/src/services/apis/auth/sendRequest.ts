@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { apiConnector } from "../apiConnect";
 import { peopleEndpoint } from "../apis";
 
-const { FIND_PEOPLE, SEND_REQUEST, GET_ALL_REQUESTS, ACCEPT_REQUESTS, GET_ALL_FRIENDS, OPEN_CONVO } = peopleEndpoint;
+const { FIND_PEOPLE, SEND_REQUEST, GET_ALL_REQUESTS, ACCEPT_REQUESTS, GET_ALL_FRIENDS, OPEN_CONVO, SEND_MSG } = peopleEndpoint;
 
 export const findPeople = async (userName: string) => {
   try {
@@ -146,6 +146,15 @@ export const openConvo = async (friendId: string) => {
     const response = await apiConnector("POST", OPEN_CONVO, {friendId})
     console.log("OPN CONVO", response.data);
     return response.data
+  }catch(error){
+    console.log(error);
+  }
+}
+
+export const sendMessageToFriend = async (friendId: string, content: string) => {
+  try{
+    const response = await apiConnector("POST", SEND_MSG, {friendId, content})
+    console.log("response msg", response);
   }catch(error){
     console.log(error);
   }

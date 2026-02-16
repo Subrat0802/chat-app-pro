@@ -13,7 +13,8 @@ export const peopleEndpoint = {
     GET_ALL_REQUESTS:BASE_URL + "/api/v1/chat/getAllRequest", //acceptRequest
     ACCEPT_REQUESTS: BASE_URL + "/api/v1/chat/acceptRequest",
     GET_ALL_FRIENDS: BASE_URL + "/api/v1/chat/getAllFriends", 
-    OPEN_CONVO: BASE_URL + "/api/v1/chat/openConversation"
+    OPEN_CONVO: BASE_URL + "/api/v1/chat/openConversation",
+    SEND_MSG: BASE_URL + "/api/v1/chat/sendMessage"
 }
 
 

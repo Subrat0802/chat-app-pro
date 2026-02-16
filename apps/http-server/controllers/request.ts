@@ -1,9 +1,8 @@
 import { prismaClient } from "@repo/db/client";
 import { type Request, type Response } from "express";
 import NodeCache from "node-cache";
-import { success } from "zod";
 
-const cache = new NodeCache({stdTTL: 60});
+const cache = new NodeCache({stdTTL: 60}); // 60 seconds TTL
 
 export const sendRequest = async (req: Request, res: Response) => {
     try {
@@ -102,6 +101,9 @@ export const sendRequest = async (req: Request, res: Response) => {
             }
         })
 
+        // Invalidate cache
+        cache.del(`req_${receiverId}`);
+
         return res.status(201).json({
             message: "Friend request sent successfully",
             success: true,
@@ -133,10 +135,8 @@ export const sendRequest = async (req: Request, res: Response) => {
 }
 
 export const getAllRequest = async (req:Request, res:Response) => {
-  // const startTime = Date.now();
     try{
         const userId = req.user;
-        // console.log(`[${Date.now() - startTime}ms] User ID extracted:`, userId);
         const cacheKey = `req_${userId}`;
         const cached = cache.get(cacheKey);
 
@@ -148,7 +148,6 @@ export const getAllRequest = async (req:Request, res:Response) => {
           })
         }
 
-        // const dbStart = Date.now();
         const response = await prismaClient.friendRequest.findMany({
             where:{
                 receiverId: userId,
@@ -167,8 +166,6 @@ export const getAllRequest = async (req:Request, res:Response) => {
               createdAt: "desc"
             }
         })
-        // console.log(`[${Date.now() - dbStart}ms] Database query completed`);
-        // console.log(`[${Date.now() - startTime}ms] Total time before response`);
 
         if(!response){
             return res.status(404).json({
@@ -190,8 +187,6 @@ export const getAllRequest = async (req:Request, res:Response) => {
         })
     }
 }
-
-
 
 export const acceptRequest = async (req:Request, res:Response) => {
     try{
@@ -224,21 +219,24 @@ export const acceptRequest = async (req:Request, res:Response) => {
         const user1Id = ids[0] as string;
         const user2Id = ids[1] as string;
 
-        
         await prismaClient.$transaction([
-        prismaClient.friendRequest.update({
-            where: { id: requestId },
-            data: { status: "ACCEPTED" },
-        }),
-        prismaClient.friendship.create({
-            data: { user1Id, user2Id },
-        }),
+          prismaClient.friendRequest.update({
+              where: { id: requestId },
+              data: { status: "ACCEPTED" },
+          }),
+          prismaClient.friendship.create({
+              data: { user1Id, user2Id },
+          }),
         ]);
+
+        // Invalidate caches
+        cache.del(`req_${userId}`);
+        cache.del(`friends_${userId}`);
+        cache.del(`friends_${findFrienRequest.senderId}`);
 
         return res.status(200).json({
             message: "Friend request accepted",
         });
-
 
     }catch(error){
         console.error(error);
@@ -248,11 +246,19 @@ export const acceptRequest = async (req:Request, res:Response) => {
     }
 }
 
-
-
 export const getAllFriends = async (req: Request, res: Response) => {
     try{    
         const userId = req.user;
+        const cacheKey = `friends_${userId}`;
+        const cached = cache.get(cacheKey);
+
+        if(cached) {
+          return res.status(200).json({
+            message:"Your friends list (cached)",
+            success: true,
+            friends: cached
+          })
+        }
 
         const friendships = await prismaClient.friendship.findMany({
             where:{
@@ -279,11 +285,11 @@ export const getAllFriends = async (req: Request, res: Response) => {
             }
         })
 
-        // console.log(friendships);
-
         const friends = friendships.map((f) => 
             f.user1Id === userId ? f.user2 : f.user1
         )
+
+        cache.set(cacheKey, friends);
 
         return res.status(200).json({
             message:"Your friends list",
@@ -299,15 +305,18 @@ export const getAllFriends = async (req: Request, res: Response) => {
     }
 }
 
-
-
-
 export const openConversation = async (req: Request, res: Response) => {
   try {
     const userId = req.user;      
     const { friendId } = req.body;   
 
     const [u1, u2] = [userId, friendId].sort();
+    const cacheKey = `convo_${u1}_${u2}`;
+    const cached = cache.get(cacheKey);
+
+    if(cached) {
+      return res.status(200).json({ conversation: cached });
+    }
 
     // Shared include configuration
     const includeConfig = {
@@ -358,6 +367,8 @@ export const openConversation = async (req: Request, res: Response) => {
       });
     }
 
+    cache.set(cacheKey, convo, 30); // 30 seconds for conversations
+
     return res.status(200).json({ conversation: convo });
 
   } catch (error) {
@@ -365,7 +376,6 @@ export const openConversation = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 export const sendMessage = async (req: Request, res: Response) => {
   try {
@@ -379,6 +389,7 @@ export const sendMessage = async (req: Request, res: Response) => {
     if (!friendId || !content) {
       return res.status(400).json({ message: "Missing data" });
     }
+    
     const isFriend = await prismaClient.friendship.findFirst({
       where: {
         OR: [
@@ -418,7 +429,20 @@ export const sendMessage = async (req: Request, res: Response) => {
         senderId,
         conversationId: conversation.id,
       },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          }
+        }
+      }
     });
+
+    // Invalidate conversation cache
+    cache.del(`convo_${u1}_${u2}`);
+    cache.del(`messages_${conversation.id}`);
 
     return res.status(201).json({
       message: "Message sent",
@@ -431,16 +455,21 @@ export const sendMessage = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
 export const getMessages = async (req: Request, res: Response) => {
   try {
     const conversationId = req.params.conversationId as string;
-    console.log("con", conversationId);
     
     if (!conversationId) {
       return res.status(400).json({ message: "Conversation ID is required"}); 
+    }
+
+    const cacheKey = `messages_${conversationId}`;
+    const cached = cache.get(cacheKey);
+
+    if(cached) {
+      return res.status(200).json({
+        messages: cached,
+      });
     }
     
     const messages = await prismaClient.message.findMany({
@@ -450,7 +479,18 @@ export const getMessages = async (req: Request, res: Response) => {
       orderBy: {                    
         createdAt: "asc",
       },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          }
+        }
+      }
     });
+
+    cache.set(cacheKey, messages, 30); // 30 seconds
 
     return res.status(200).json({
       messages,
@@ -463,8 +503,6 @@ export const getMessages = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const findPeople = async (req: Request, res: Response) => {
   try{
     const userId = req.user;
@@ -473,6 +511,17 @@ export const findPeople = async (req: Request, res: Response) => {
     if(!userName){
       return res.status(400).json({
         message:"user name is required"
+      })
+    }
+
+    const cacheKey = `search_${userName}`;
+    const cached = cache.get(cacheKey);
+
+    if(cached) {
+      return res.status(200).json({
+        message:"user found (cached)",
+        success: true,
+        response: cached
       })
     }
 
@@ -496,6 +545,8 @@ export const findPeople = async (req: Request, res: Response) => {
         success:false
       })
     }
+
+    cache.set(cacheKey, response, 120); // 2 minutes for search results
 
     return res.status(200).json({
       message:"user found",

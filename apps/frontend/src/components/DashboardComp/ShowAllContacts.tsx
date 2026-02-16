@@ -2,6 +2,8 @@ import { User as UserIcon } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { findPeople, getAllFriends, openConvo, sendRequest } from "../../services/apis/auth/sendRequest";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setCurrentMsg, startLoading } from "../../services/redux/slices/currentMessage";
 
 type ContactUser = {
   id: string,
@@ -17,6 +19,7 @@ const ShowAllContacts = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchUsers, setSearchUsers] = useState<ContactUser[]>([]);
   const [allFriends, setAllFrineds] = useState<ContactUser[]>([]);
+  const dispatch = useDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -67,9 +70,11 @@ const ShowAllContacts = () => {
   }, []);
 
   const handleOpenConvo = async (friendId: string) => {
+    dispatch(startLoading())
     console.log("Frinednid", friendId);
     const response = await openConvo(friendId);
-    console.log("FROENDSIDE CONVO", response);
+    console.log("FROENDSIDE CONVO", response.conversation);
+    dispatch(setCurrentMsg(response.conversation));
   }
 
   return (
