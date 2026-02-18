@@ -22,16 +22,22 @@ interface FriendRequest {
 const Requests = () => {
     const [users, setUsers] = useState<FriendRequest[] | null>(null);
     const [loading, setLoading] = useState(true);
-    // console.log("GET ALL REQUEST", users);
-    useEffect(() => {
-        const getUsersRequest = async () => {
+    const fetchUserRequests = async () => {
             setLoading(true);
             const repsonse = await getAllRequests();
             setUsers(repsonse);
             setLoading(false);
         }
-        getUsersRequest();
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchUserRequests();
     }, []);
+
+    const handleAcceptRequest = async (requestId: string) => {
+        await acceptRequest(requestId);
+        await fetchUserRequests()
+    }
 
     if(loading) {
         return <p>Loading...</p>
@@ -40,9 +46,9 @@ const Requests = () => {
   return (
     <div>
         {
-            users == null ? <p>No requests</p> : <div>
+            users?.length == 0 ? <p className="justify-center flex items-center h-[90dvh] text-white ">No requests</p> : <div>
                 {
-                    users.map((el) => {
+                    users?.map((el) => {
                         return <div className="w-full items-center gap-4 relative flex p-3 rounded-sm bg-gray-900" key={el.sender.id}>
                             <div className="p-3 bg-gray-950 rounded-full flex justify-center items-center">
                                 <User />
@@ -52,7 +58,7 @@ const Requests = () => {
                             <p  className="text-white/50">{el.sender.name}</p>
                             </div>
                             <div className="right-0 absolute flex gap-2 mr-3">
-                                <p onClick={() => {return acceptRequest(el.id)}} className=" bg-sky-600 rounded-full px-3 cursor-pointer transition-all duration-200 hover:bg-sky-500 py-2 text-sm">Accept</p>
+                                <p onClick={() => handleAcceptRequest(el.id)} className=" bg-sky-600 rounded-full px-3 cursor-pointer transition-all duration-200 hover:bg-sky-500 py-2 text-sm">Accept</p>
                                 <p onClick={() => {}} className=" bg-sky-600 rounded-full px-3 cursor-pointer transition-all duration-200 hover:bg-sky-500 py-2 text-sm">Decline</p>
                             </div>
                             

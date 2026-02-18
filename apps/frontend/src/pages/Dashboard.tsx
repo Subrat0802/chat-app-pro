@@ -10,7 +10,7 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   return (
     <div className="w-full flex min-h-screen max-h-screen">
-      <div className=" flex flex-col items-center  pt-5 gap-3 w-[4%] bg-sky-600/90 ">
+      <div className=" flex  md:flex-col items-center  pt-5 gap-3 md:bottom-0 w-[4%] bg-sky-600/90 ">
         <div onClick={() => {return dispatch(setActiveView("message"))}} className="p-3 rounded-full cursor-pointer text-white/50 bg-sky-400/30 h-fit">
           <MessagesSquare />
         </div>
@@ -25,10 +25,10 @@ const Dashboard = () => {
         </div>
 
       </div>
-      <div className=" w-[31%] overflow-y-scroll">
+      <div className="w-full md:w-[31%] overflow-y-scroll">
         <Contacts />
       </div>
-      <div className=" w-[65%]">
+      <div className=" w-0 md:w-[65%]">
         <Messages />
       </div>
     </div>

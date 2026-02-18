@@ -122,6 +122,7 @@ export const getAllRequests = async () => {
 export const acceptRequest = async (requestId: string) => {
   try{
     const response = await apiConnector("POST", ACCEPT_REQUESTS, {requestId});
+    await getAllRequests();
     console.log("Request accepted", response);
   }catch(error){
     console.log("error", error);

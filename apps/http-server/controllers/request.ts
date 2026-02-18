@@ -2,7 +2,7 @@ import { prismaClient } from "@repo/db/client";
 import { type Request, type Response } from "express";
 import NodeCache from "node-cache";
 
-const cache = new NodeCache({stdTTL: 60}); // 60 seconds TTL
+const cache = new NodeCache({stdTTL: 120}); // 60 seconds TTL
 
 export const sendRequest = async (req: Request, res: Response) => {
     try {

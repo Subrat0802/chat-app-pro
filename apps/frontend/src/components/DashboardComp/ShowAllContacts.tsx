@@ -2,8 +2,9 @@ import { User as UserIcon } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { findPeople, getAllFriends, openConvo, sendRequest } from "../../services/apis/auth/sendRequest";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCurrentMsg, startLoading } from "../../services/redux/slices/currentMessage";
+import type { RootState } from "../../main";
 
 type ContactUser = {
   id: string,
@@ -19,6 +20,8 @@ const ShowAllContacts = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchUsers, setSearchUsers] = useState<ContactUser[]>([]);
   const [allFriends, setAllFrineds] = useState<ContactUser[]>([]);
+  console.log("allfriends", allFriends);
+  const currentConvoFriend = useSelector((state: RootState) => state.msgState.currentConversation?.user1Id);
   const dispatch = useDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,9 +74,9 @@ const ShowAllContacts = () => {
 
   const handleOpenConvo = async (friendId: string) => {
     dispatch(startLoading())
-    console.log("Frinednid", friendId);
+    // console.log("Frinednid", friendId);
     const response = await openConvo(friendId);
-    console.log("FROENDSIDE CONVO", response.conversation);
+    // console.log("FROENDSIDE CONVO", response.conversation);
     dispatch(setCurrentMsg(response.conversation));
   }
 
@@ -126,7 +129,7 @@ const ShowAllContacts = () => {
       <div className="pt-2 flex-1 overflow-y-auto scroll-smooth bg-gray-800/10">
       {
         allFriends.length == 0 ? <p>No frineds</p> : allFriends.map((el) => (
-            <div key={el.id} onClick={() => handleOpenConvo(el.id)} className="flex items-center gap-4 py-2 px-3 rounded-md cursor-pointer hover:bg-gray-900 transition">
+            <div key={el.id} onClick={() => handleOpenConvo(el.id)} className={`flex items-center gap-4 py-2 px-3 rounded-md cursor-pointer hover:bg-gray-900 transition-all duration-300 ${currentConvoFriend === el.id && "bg-gray-900"}`}>
           <div className="p-4 bg-gray-700 rounded-full">
             <UserIcon className="text-white" />
           </div>
