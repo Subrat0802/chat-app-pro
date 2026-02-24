@@ -7,11 +7,11 @@ const Auth = () => {
 
   return (
     <div className="w-full min-h-screen pt-16 flex justify-center items-center bg-black">
-      <div className="max-w-7xl w-full flex h-[80dvh] overflow-hidden rounded-3xl shadow-2xl shadow-sky-500/20 bg-zinc-900 border border-zinc-800">
+      <div className="max-w-7xl w-full flex flex-col lg:flex-row h-[80dvh] overflow-hidden rounded-3xl shadow-2xl shadow-sky-500/20 bg-zinc-900 border border-zinc-800">
 
-        {/* Left Side - Signin */}
+
         <div className="w-1/2 relative">
-          {/* Animated Background Panel */}
+
           <div className={`
               absolute inset-0 bg-linear-to-br from-sky-600 to-sky-800 rounded-3xl
               transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
@@ -40,7 +40,7 @@ const Auth = () => {
             </div>
           </div>
           
-          {/* Signin Component */}
+
           <div className={`
             absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
             ${show === "signin" 
@@ -51,9 +51,8 @@ const Auth = () => {
           </div>
         </div>
 
-        {/* Right Side - Signup */}
+
         <div className="w-1/2 relative">
-          {/* Animated Background Panel */}
           <div className={`
               absolute inset-0 bg-linear-to-br from-sky-600 to-sky-800 rounded-3xl
               transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
@@ -83,7 +82,7 @@ const Auth = () => {
             </div>
           </div>
           
-          {/* Signup Component */}
+
           <div className={`
             absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
             ${show === "signup" 

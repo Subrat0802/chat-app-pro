@@ -8,15 +8,15 @@ interface InputProps {
 }
 
 const styles = {
-  primary: "border px-3 py-2 rounded w-[80%] focus:outline-none focus:ring-1 focus:border-sky-500  transition-all duration-200",
-  secondary: "border px-3 py-2 rounded bg-gray-100",
+  primary: "border border-white/20  px-3 py-2 rounded w-[80%] focus:outline-none focus:ring-1 transition-all duration-200",
+  secondary: "border border-gray-800 px-3 py-2 rounded ",
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({placeholder, type, onClick, style}, ref) => {
   return (
-    <input  
-      className={`${styles[style]}`} 
+    <input 
+      className={`${styles[style]} `} 
       ref={ref}
       placeholder={placeholder} 
       type={type} 

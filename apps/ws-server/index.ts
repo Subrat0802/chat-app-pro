@@ -13,7 +13,7 @@ interface WSUserConnection {
   convoId: string;
 }
 
-// All active connections, scoped by conversation
+  // All active connections
 const connections: WSUserConnection[] = [];
 
 function getTokenFromCookies(cookieHeader: string | undefined): string | null {
@@ -38,7 +38,7 @@ function checkUser(token: string): string | null {
       return null;
     }
 
-    // Our JWT payload is { userId: string }
+     //our jwt payload is {userId:string}
     const payload = decoded as jwt.JwtPayload;
     if (!payload.userId || typeof payload.userId !== "string") {
       return null;
@@ -59,7 +59,7 @@ wsServer.on("connection", function connection(ws, request) {
     return;
   }
 
-  // Expect URLs like: /?convoId=xyz
+  //expect url like:/?convoId=xyz
   const queryString = url.split("?")[1] || "";
   const queryParams = new URLSearchParams(queryString);
   const convoId = queryParams.get("convoId") || "";
@@ -102,7 +102,7 @@ wsServer.on("connection", function connection(ws, request) {
       };
 
       if (parsed.type === "message" && parsed.content && parsed.content.trim()) {
-        // 1. Save message to DB
+
         const newMessage = await prismaClient.message.create({
           data: {
             content: parsed.content.trim(),
@@ -122,7 +122,6 @@ wsServer.on("connection", function connection(ws, request) {
           },
         });
 
-        // 2. Broadcast to all users in this conversation (sender + friend)
         for (const conn of connections) {
           if (conn.convoId === convoId && conn.ws.readyState === WebSocket.OPEN) {
             conn.ws.send(payload);

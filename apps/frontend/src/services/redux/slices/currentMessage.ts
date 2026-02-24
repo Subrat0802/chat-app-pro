@@ -1,8 +1,4 @@
-// redux/slices/msgSlice.ts
-
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
-/* ================== TYPES ================== */
 
 export interface User {
   id: string;
@@ -27,7 +23,7 @@ export interface Conversation {
   messages: Message[];
 }
 
-/* ================== STATE ================== */
+
 
 interface MsgState {
   currentConversation: Conversation | null;
@@ -39,7 +35,7 @@ const initialState: MsgState = {
   loading: false,
 };
 
-/* ================== SLICE ================== */
+
 
 const msgSlice = createSlice({
   name: "msg",

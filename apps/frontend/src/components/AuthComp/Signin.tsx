@@ -53,7 +53,7 @@ const Signin = ({show, setShow,}: {show: string; setShow: React.Dispatch<React.S
             placeholder="Password"
           />
           
-          <button onClick={handleSigninSubmit} className="md:text-xl w-[80%] cursor-pointer hover:-translate-y-1 hover:border-transparent hover:shadow-xs transition-all duration-300 hover:shadow-sky-600 font-semibold p-2 md:p-4 border relative group">
+          <button onClick={handleSigninSubmit} className="md:text-xl w-[80%] cursor-pointer hover:-translate-y-1 hover:border-transparent hover:shadow-xs transition-all duration-300 hover:shadow-sky-600 font-semibold p-2 md:p-4 border border-white/50 relative group">
             Signin
             <div className="z-10  absolute w-full  opacity-0 group-hover:opacity-100 transition-all duration-300 border-2 bg-sky-600 border-sky-600 bottom-0 left-0"></div>
           </button>
